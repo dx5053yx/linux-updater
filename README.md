@@ -119,6 +119,7 @@ cargo build --release
 updet/
 ├── src/
 │   ├── main.rs      — entry point, menu TUI, CLI flag handler
+├──system/
 │   ├── detect.rs    — deteksi distro, package manager, immutable system
 │   └── updater.rs   — eksekusi update, filter redundant manager
 └── Cargo.toml
