@@ -1,0 +1,1 @@
+/home/akiru/Documents/update_projek/target/release/updet: /home/akiru/Documents/update_projek/src/main.rs /home/akiru/Documents/update_projek/system/detect.rs /home/akiru/Documents/update_projek/system/updater.rs

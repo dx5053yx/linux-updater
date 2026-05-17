@@ -1,9 +1,14 @@
+#[path = "../system/detect.rs"]
 mod detect;
+
+#[path = "../system/updater.rs"]
 mod updater;
 
 use colored::*;
 use detect::{detect_system, PackageManager, SystemInfo};
 use std::io::{self, Write};
+use unicode_width::UnicodeWidthStr;
+
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -82,33 +87,46 @@ fn main() {
     }
 }
 
+
+fn pad_to(value: &str, width: usize) -> String {
+    let current = UnicodeWidthStr::width(value);
+    if current >= width {
+        value.to_string()
+    } else {
+        format!("{}{}", value, " ".repeat(width - current))
+    }
+}
+
 fn print_menu(system_info: &SystemInfo) {
     clear_screen();
-    println!("{}", "╔══════════════════════════════════════════╗".cyan());
-    println!("{}", "║         updet — universal update         ║".cyan());
-    println!(
-        "{}",
-        format!(
-            "║   Distro: {:<20} ║",
-            fit_display(&system_info.distro_id, 20)
-        )
-        .cyan(),
-    );
-    println!(
-        "{}",
-        format!("║   Kernel: {:<19} ║", fit_display(&kernel_version(), 19)).cyan(),
-    );
+    let width = 40; // lebar isi dalam box (antara ║ dan ║)
+    let title = "updet — universal update";
+    let title_pad = (width - title.chars().count()) / 2;
+    
+    println!("{}", format!("╔{}╗", "═".repeat(width)).cyan());
+    println!("{}", format!("║{}{}{}║",
+        " ".repeat(title_pad),
+        title,
+        " ".repeat(width - title_pad - title.chars().count())
+    ).cyan());
+    println!("{}", format!("║{}║", " ".repeat(width)).cyan());
+    println!("{}", format!("║  Distro : {}║",
+        pad_to(&fit_display(&system_info.distro_id, width - 12), width - 11)
+    ).cyan());
+    println!("{}", format!("║  Kernel : {}║",
+        pad_to(&fit_display(&kernel_version(), width - 12), width - 11)
+    ).cyan());
+    println!("{}", format!("╚{}╝", "═".repeat(width)).cyan());
     if !system_info.distro_like.is_empty() {
         println!(
             "{}",
             format!(
-                "║   Turunan: {:<18} ║",
-                fit_display(&system_info.distro_like.join(", "), 18)
+                "║   Turunan: {} ║",
+                pad_to(&fit_display(&system_info.distro_like.join(", "), 18), 18)
             )
             .cyan(),
         );
     }
-    println!("{}", "╚══════════════════════════════════════════╝".cyan());
     println!();
     println!("  Pilih opsi update:");
 
